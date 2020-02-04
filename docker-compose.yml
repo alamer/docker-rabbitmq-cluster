@@ -1,0 +1,37 @@
+version: '3.6'
+services:
+  rabbit_node_1:
+      build: .
+      hostname: rabbit_node_1
+      ports:
+          - "5674:5672"
+          - "15674:15672"
+      environment:
+        - RABBITMQ_ERLANG_COOKIE='mysecret'       
+        - RABBITMQ_DEFAULT_USER=test
+        - RABBITMQ_DEFAULT_PASS=test
+  rabbit_node_2:
+      build: .
+      hostname: rabbit_node_2
+      links:
+          - rabbit_node_1      
+      ports:
+          - "5673:5672"
+          - "15673:15672"
+      environment:
+          - RABBITMQ_ERLANG_COOKIE='mysecret'
+          - CLUSTERED=true
+          - CLUSTER_WITH=rabbit_node_1
+  rabbit_node_3:
+      build: .
+      hostname: rabbit_node_3
+      links:
+          - rabbit_node_1      
+          - rabbit_node_2
+      ports:
+          - "5675:5672"
+          - "15675:15672"
+      environment:
+          - RABBITMQ_ERLANG_COOKIE='mysecret'
+          - CLUSTERED=true
+          - CLUSTER_WITH=rabbit_node_1
